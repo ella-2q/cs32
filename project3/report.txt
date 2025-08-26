@@ -1,0 +1,38 @@
+In the scaffold class, I use the stack data structure to maintain a history of past moves, which is necessary for the undo move function. Otherwise, I did not use data structures. I created a few additional functions in the Player class to evaluate the SmartPlayer::chooseMove, such as rateMove, minimax, gameOver, and checkDirection(which was used for gameOver). Minimax used gameOver to choose a bestScore depending on whether the game had finished yet or not since I could not access the Scaffold functions for Player.
+
+In SmartPlayer::chooseMove, the program loops through each column in the board, checking the best score possible through minimax and saving that column with the highest score. The minimax program has three base cases, a won game by the computer, by the opponent, or a tie game. Each of these situations is assigned a value, and the algorithm tries to maxamize the value, or minimize the value if thinking through the opponents thoughts. If the game is not won, each of the possible subsequent moves is called (thinking as the other player) and so forth until a base case is reached. It uses the two helper functions gameOver and CheckDirection to evaluate the state of the game. The best move is returned through minimax and eventually returned back to chooseMove.
+
+
+PSEUDOCODE ==================================
+
+ChooseMove...
+set bestmove to an impossible value, and bestScore to an impossibly low value.
+for each column in the board
+    create a copy scaffold and if a move is possible in a column, call minimax on that column.
+    if returned minimax value is higher than bestScore, save the corresponding column number to bestMove.
+    
+if best move is still the impossible value (not a valid column) set bestMove to the first column with vacancy.
+
+return bestMove.
+
+
+minimax...
+if the game is over set winner to the color of winner.
+    if winner is TIE_GAME return 0.
+    if the winner is computer return 1000 - depth.
+    if the winner is the opponent return -1000 + depth.
+
+if max depth has been reached, return value from ratePosition.
+
+otherwise, for each column where a move is possible
+    make a move in that column.
+    call minimax for that column
+    undo move
+    if we are the computer and the score is > than previous score, update score.
+    if we are the opponent and score is < than previous score, update score.
+    
+    
+============================================
+
+Some notable problems I had were making sure that the AI tries to lose in as many moves as possible. It was a bit hard testing this as there were times were I couldn't understand whether the AI was making the move as it was the best move or because it had given up on the game as there was no winnable solution. I'm still not quite sure this operates fully correctly. It was also just hard testing in general as sometimes what I thought was the ideal move didnt match SmartPlayer decision, so it was especially hard tracking nonhuman matches.
+
