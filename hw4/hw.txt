@@ -1,0 +1,18 @@
+
+1e) Case #3 fails because after the pusback when k == 2 the vector may have reallocated its curernt array and the iterator is now calling to values outside of the original vector leading to undefined behavior.
+
+3) This wouldnt work as the Coord class operates using two values, r and c, and  comparison operatores for the Coord class are undefined. This means that the insert function fails as it uses == to compare the Coord class which it is not programmed to know how to do.
+
+4b) We would not be able to solve this problem if only given a one-parameter listAll as there would be no way to pass down the information from the parent paths.
+
+5a) This is an O(N^3) complexity algorithm as 3 different 0 to N loops are nested within each, making this require much more than N calls.
+
+5b) While this algorithm does optimize more than the previous one, this is still an O(N^3) complexity algorithm as there are still 3 nested loops, one running N times, the other N-1 times, and a third loop running N times. This multiplies out to O(N^3).
+
+6a) The worst case scenario is if set 1 and set 2 are not the same set. The worst case time complexity is O(N^2) as if set 1 and 2 are not the same, we have to traverse linked list nodes each time for the call to get v for input, and then insert also requires traversal to the end of the list.
+
+6b) (first insert) O(N) + (second insert) O(N) + (sort) O(N log N) + (delete previous set) O(N) + (insert unique values) O(2N)
+
+    As O(NlogN) is the highest order value, that is the time complexity of the function.
+    
+6c) This is an 3O(N) order function as we we we only loop through each set once, and they are not nested, as well as the O(N) operation of initation sp or *this. 
