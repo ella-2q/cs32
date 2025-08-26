@@ -1,0 +1,264 @@
+In my doubly linked implementation, I created a circular linked list with a dummy node as the head. In the each, there is just a pointer to the next Node and the previous Node and when the Set is first initialized, the only Node is the head Node whose next and previous are itself. When another Node is inserted into the Set, the Node is inputed in order to make the get function later work more easily.
+
+
+A typical set looks like this:
+
+Set --
+
+head            node1           node2
+m_next  -->     m_next   -->    m_next --> .. headNode
+m_prev  <--     m_prev  <--     m_prev <-- .. headNode
+value = ...     value = "cat"   value = "dog"
+
+
+while an empty set would just have:
+
+head
+m_next --> headNode
+m_prev <-- headNode
+
+
+=============================== PseudoCode for non-trivial algorithms
+
+EXCLUDEINCLUDE:
+
+
+assign values from set2 to temporary set
+repeatedly:
+    get value from set1
+    if that value is in temporary
+        erase that value from temporary
+assign values from temporary to result
+return result
+...
+____________________________________
+
+
+UNITE:
+
+
+assign values from set1 into result
+repeatedly:
+    get value from set2
+    if result does not contain value
+        insert value into result
+return result
+...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Test Cases:
+
+=============================== Test Case #1: //checking that the linked list works the same as the array (given by specs)
+Set ss;  // ItemType is std::string
+ss.insert("ccc");
+ss.insert("aaa");
+ss.insert("bbb");
+ItemType x = "xxx";
+assert(!ss.get(3, x)  &&  x == "xxx");  // x is unchanged
+assert(ss.get(1, x)  &&  x == "bbb");   // "bbb" is greater than exactly 1 item
+
+=============================== Test Case #2: (given by specs)
+
+#include "Set.h"
+#include <type_traits>
+
+#define CHECKTYPE(c, f, r, a)  \
+{  \
+ static_assert(std::is_same<decltype(&c::f), r (c::*)a>::value, \
+     "You did not declare " #c "::" #f " as the Project 2 spec does");  \
+ auto p = static_cast<r (c::*)a>(&c::f);  \
+ (void) p;  \
+}
+#define CHECKTYPENONMEMBER(f, t)  \
+{  \
+ static_assert(std::is_same<decltype(f), t>::value, \
+     "You did not declare " #f " as the Project 2 spec does");  \
+ auto p = static_cast<std::add_pointer<t>::type>(f);  \
+ (void) p;  \
+}
+
+static_assert(std::is_default_constructible<Set>::value,
+        "Set must be default-constructible.");
+static_assert(std::is_copy_constructible<Set>::value,
+        "Set must be copy-constructible.");
+static_assert(std::is_copy_assignable<Set>::value,
+        "Set must be assignable.");
+static_assert(std::is_same<decltype(std::declval<Set>() = Set()), Set&>::value,
+        "Set::operator= return type should be Set&");
+
+void thisFunctionWillNeverBeCalled()
+{
+    CHECKTYPE(Set, empty,    bool, () const);
+    CHECKTYPE(Set, size,     int,  () const);
+    CHECKTYPE(Set, insert,   bool, (const ItemType&));
+    CHECKTYPE(Set, erase,    bool, (const ItemType&));
+    CHECKTYPE(Set, contains, bool, (const ItemType&) const);
+    CHECKTYPE(Set, get,      bool, (int, ItemType&) const);
+    CHECKTYPE(Set, swap,     void, (Set&));
+    CHECKTYPENONMEMBER(unite,          void(const Set&, const Set&, Set&));
+    CHECKTYPENONMEMBER(excludeInclude, void(const Set&, const Set&, Set&));
+}
+
+int main()
+{}
+
+=============================== Test Case #3: (given by specs)
+#include "Set.h"
+#include <string>
+#include <iostream>
+#include <cassert>
+using namespace std;
+
+void test()
+{
+    Set ss;
+    assert(ss.insert("roti"));
+    assert(ss.insert("pita"));
+    assert(ss.size() == 2);
+    assert(ss.contains("pita"));
+    ItemType x = "laobing";
+    assert(ss.get(0, x)  &&  x == "pita");
+    assert(ss.get(1, x)  &&  x == "roti");
+}
+
+int main()
+{
+    test();
+    cout << "Passed all tests" << endl;
+}
+
+
+=============================== Test Case #4: (given by specs)
+#include "Set.h"
+#include <iostream>
+#include <cassert>
+using namespace std;
+
+void test(const Set& uls)
+{
+    assert(uls.size() == 2);
+    assert(uls.contains(10));
+    ItemType x = 30;
+    assert(uls.get(0, x)  &&  x == 10);
+    assert(uls.get(1, x)  &&  x == 20);
+}
+
+int main()
+{
+    Set s;
+    assert(s.insert(20));
+    assert(s.insert(10));
+    test(s);
+    cout << "Passed all tests" << endl;
+}
+
+=============================== Test Case #5: In this test case, I'm checking whether the basic functions using unsigned long, such as empty, size, insert, contains, and get operate correctly. With boundary cases that check propertly functionality even when get is out of bounds and that the erase function works with an empty set.
+
+#include "Set.h"
+#include <iostream>
+#include <cassert>
+using namespace std;
+
+int main(){
+    Set s1;
+    assert(s1.empty() == true);
+    assert(s1.contains(4.888) == false);
+    assert(s1.size() == 0);
+    assert(s1.insert(2) == true);
+    assert(s1.insert(2) == false); // does not insert twice
+    assert(s1.insert(8) == true);
+    assert(s1.insert(3) == true);
+    assert(s1.insert(9) == true);
+    assert(s1.insert(5) == true);
+    s1.dump();
+    assert(s1.size() == 5); // check size is correct
+    unsigned long value = 0;
+    assert(s1.get(0, value) == true); // check that get function operates correctly, even when scope of i is out of bounds.
+    assert(value == 2);
+    assert(s1.get(20, value) == false);
+    assert(value == 2);
+
+    Set s2; //initialize set 2
+    
+    assert(s2.insert(6) == true);
+    assert(s2.insert(3) == true);
+    assert(s2.insert(8) == true);
+    assert(s2.insert(5) == true);
+    assert(s2.insert(10) == true);
+
+
+    assert(s2.contains(10) == true);
+    assert(s2.erase(6) == true);
+    assert(s2.erase(89) == false);
+    assert(s1.contains(6) == false); // check erase function works correctly.
+    assert(s2.insert(6) == true);
+    
+    Set s3;
+    assert(s3.erase(6) == false); //check erase works with an empty set.
+
+
+=============================== Test Case #6: Here, I'm using the sets established previously to check whether unite works correctly.
+
+    Set result;
+    Set correctResult;
+    correctResult.insert(9);
+    correctResult.insert(3);
+    correctResult.insert(6);
+    correctResult.insert(5);
+    correctResult.insert(10);
+    correctResult.insert(2);
+    correctResult.insert(8);
+    assert(correctResult.size() == 7);
+    
+    unite(s1, s2, result);
+ 
+    // 6 3 8 5 10
+    //9 3 6 5 10 2 8
+    
+    result.dump();
+    correctResult.dump(); // checking that the correct result and result from unite are the same.
+
+}
+
+=============================== Test Case #7: Testing copy constructor and assignment operator to create equivalent Sets to previously used s1 Set. As well as that swap can swap an empty set with a nonempty set.
+
+    Set copyConstruct(result);
+    Set assignmentOp;
+    cerr << "copyConstruct" << endl;
+    copyConstruct.dump();
+    copyConstruct.swap(assignmentOp); // checking that you can swap with an empty set.
+    copyConstruct.dump();
+    cerr << "assignmentOp" << endl;
+    assignmentOp.dump();
+    assignmentOp = s1;
+    cerr << "s1" << endl; // checking for equivalence between s1 and assignmentOp
+    s1.dump();
+    cerr << "assignmentOp" << endl;
+    assignmentOp.dump();
+=============================== Test Case #8: Continuing on previously used sets, testing excludeInclude.
+
+    Set s3;
+    excludeInclude(s1, s2, s3);
+    s3.dump(); // s3 should include 10 and 6, which is true;
+    
+    Set s4;
+    s4.insert(6);
+    s4.insert(5);
+    s4.insert(4);
+    
+    excludeInclude(s4, s3, s2); // checking a situation where the results Set is not empty. s2 dumps just 10, which is correct.
+    s2.dump();
+    
+    
