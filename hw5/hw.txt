@@ -1,0 +1,114 @@
+1. a)
+                                    50
+                20                                      60
+            
+    10                  40                                      70
+    
+       15           30                                       67       80
+       
+                  24   38                                           75
+
+
+
+b)
+
+preorder traversal: process the node before processing the subtrees
+50, 20, 10, 15, 40, 30, 24, 38, 60, 70, 67, 80, 75
+
+postorder traversal: process the node after processing the subtrees
+15, 10, 24, 38, 30, 40, 20, 67, 75, 80, 70, 60, 50
+
+inorder traversal: proces node in between left and right subtrees
+10, 15 20, 24, 30, 38, 40, 50, 60, 67, 70, 75, 80
+
+c)
+
+                                    50
+            24                                         60
+            
+    10                  40                                      70
+    
+       15           38                                       67       80
+       
+                                                                75
+
+2.
+a)
+
+struct Node{
+
+int stored_data;
+
+Node* left;
+Node* right;
+Node* parent;
+
+};
+
+b)
+
+set a pointer Node p as new Node
+set Node pointers left and right to nullptr
+set stored_data to data.
+
+if head of BST is a nullptr
+    set head to p and return true
+
+else
+    pointer Node tracker is set to head
+    while a tracker is not nullptr
+        if tracker's stored_data is equal to data
+            delete Node p
+            return false
+        else if tracker's stored_data is less than data
+            tracker becomes tracker->left
+        else
+            tracker becomes tracker->right
+
+    set tracker to tracker's parent
+    if tracker's stored_value is greater than data
+        tracker->right is set to Node p
+        p's parent is set to tracker
+    else
+        tracker->right is set to Node p
+        p's parent is set to tracker
+
+3.
+a)
+
+            7
+                
+    5                   6
+    
+4       1          3
+
+b)
+
+[7, 5, 6, 4, 1, 3]
+
+c)
+
+                        6
+           5                          3
+    4           1
+
+[6, 5, 3, 4, 1]
+
+
+4.
+
+a) vector<pair<string, list<int>>> ---> O(C + S)
+    
+b) map<string, list<int>> ---> O(log C + S)
+
+c) map<string, set<int>> ----> O(log C + log S)
+
+d) unordered_map<string, set<int>> ---> O(1 + log S)
+
+e) unordered_map<string, unordered_set<int> ---> O(1 + 1) = O(1)
+
+f) map<string, set<int>> ---> O(log C + S)
+
+g) unordered_map<string, unordered_set<int>> ---> O(1 + S log S) = O(S log S)
+
+h) unordered_map<string, set<int>> ---> O(C log S)
